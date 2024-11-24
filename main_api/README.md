@@ -1,5 +1,5 @@
 
-
+La documentation technique du projet se trouve sur Notion accessible via le lien: https://www.notion.so/Documentation-de-Djamo-Test-1478f39e926c809db33ad51bcd635204?pvs=4
 
 ## Installation
 
