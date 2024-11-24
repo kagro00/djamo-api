@@ -10,7 +10,7 @@ export class TransactionController {
     @Post()
     async getTransaction(@Body() body) {
         const { id, userId } = body;
-        const api_url = process.env.api_ur
+        const api_url = process.env.api_url
         const api_port = process.env.api_port
         const url = `${api_url}:${api_port}/transaction`; // URL avec le bon protocole
 
