@@ -25,7 +25,7 @@ services:
       postgresPassword: example
       postgresDB: example
     ports:
-      - "3200:3000"
+      - "3000:3000"
   client:
     build: ./client
     environment:
