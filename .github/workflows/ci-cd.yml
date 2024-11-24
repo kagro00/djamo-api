@@ -1,0 +1,81 @@
+name: CI/CD Workflow for NestJS API
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: npm install
+
+      # Lint the code
+      - name: Lint Code
+        run: npm run lint
+
+      # Run tests
+      - name: Run Tests
+        run: npm run test:ci
+
+      # Build the application
+      - name: Build API
+        run: npm run build
+
+  docker-deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+      # Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build Docker image
+      - name: Build Docker Image
+        run: |
+          docker build -t your-dockerhub-username/nestjs-api:latest .
+
+      # Push Docker image to Docker Hub
+      - name: Push Docker Image
+        run: |
+          docker push your-dockerhub-username/nestjs-api:latest
+
+  deploy-to-server:
+    runs-on: ubuntu-latest
+    needs: docker-deploy
+    steps:
+      # Deploy to server
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            docker pull your-dockerhub-username/nestjs-api:latest
+            docker stop nestjs-api || true
+            docker rm nestjs-api || true
+            docker run -d --name nestjs-api -p 3000:3000 your-dockerhub-username/nestjs-api:latest
