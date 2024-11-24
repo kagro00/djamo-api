@@ -10,7 +10,9 @@ export class TransactionController {
     @Post()
     async getTransaction(@Body() body) {
         const { id, userId } = body;
-        const url = 'http://localhost:4000/transaction'; // URL avec le bon protocole
+        const api_url = process.env.api_ur
+        const api_port = process.env.api_port
+        const url = `${api_url}:${api_port}/transaction`; // URL avec le bon protocole
 
         // Rechercher une transaction existante
         let trans = await this.transactionService.getTransactionByUid(userId);
