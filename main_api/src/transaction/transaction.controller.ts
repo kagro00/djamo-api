@@ -12,7 +12,7 @@ export class TransactionController {
         const { id, userId } = body;
         const api_url = process.env.api_url
         const api_port = process.env.api_port
-        const url = `${api_url}:${api_port}/transaction`; // URL avec le bon protocole
+        const url = `http://${api_url}:${api_port}/transaction`; // URL avec le bon protocole
 
         // Rechercher une transaction existante
         let trans = await this.transactionService.getTransactionByUid(userId);
